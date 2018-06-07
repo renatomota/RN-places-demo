@@ -1,39 +1,44 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
 
 import React, { Component } from 'react';
 import {
-  Platform,
   StyleSheet,
-  Text,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import RNGooglePlaces from 'react-native-google-places';
+import { Container, Header, Content, Button, Text, Icon  } from 'native-base';
 
 type Props = {};
 export default class App extends Component<Props> {
+  state={
+    place:''
+  }
+  openSearchModal() {
+    RNGooglePlaces.openAutocompleteModal({useOverlay:true})
+    .then((place) => {
+		this.setState({place:place})
+		
+    })
+    .catch(error => console.log(error.message));  // error is a Javascript Error object
+  }
   render() {
+    const {place} = this.state
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
-      </View>
+      <Container stule={styles.container}>
+        <Content>
+          <Text >
+            {place ? JSON.stringify(place) : ''}
+          </Text>
+        </Content>
+          <Button
+              block
+              primary              
+              onPress={() => this.openSearchModal()}
+            >
+              <Text>Press to pick a place</Text>
+              <Icon name='pin' />
+          </Button>
+      </Container>
     );
   }
 }
@@ -41,8 +46,6 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
   welcome: {
